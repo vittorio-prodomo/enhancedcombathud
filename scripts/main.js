@@ -31,6 +31,11 @@ Hooks.on("ready", () => {
   // chosen). Resolves true/false; on success the distribution is published to lastTargetDistribution.
   mod.api.runStackingPicker = ({token, count, ranges, item}) =>
     new TargetPicker({token, targets: count, ranges: ranges ?? {normal: null, long: null}, stack: true, item}).promise;
+  // Run the plain (non-stacking) picker on demand, for callers outside the HUD that want the
+  // native "0/N targets" canvas flow (e.g. CPR's Hunter's Mark move button). Resolves true once
+  // the user's targets reach `targets` (read them off game.user.targets), false on cancel.
+  mod.api.runTargetPicker = ({token, targets = 1, ranges, item}) =>
+    new TargetPicker({token, targets, ranges: ranges ?? {normal: null, long: null}, item}).promise;
 });
 
 export function registerKeybindings() {
