@@ -60,6 +60,9 @@ export class ItemButton extends ArgonComponent{
   }
 
   get useTargetPicker() {
+    // Items that run their own recipient-picking flow (e.g. chris-premades' Potion of
+    // Healing gate) opt out of the native pre-click picker to avoid double-prompting.
+    if (this.item?.getFlag?.("enhancedcombathud", "skipTargetPicker")) return false;
     return game.settings.get("enhancedcombathud", "rangepicker");
   }
 
