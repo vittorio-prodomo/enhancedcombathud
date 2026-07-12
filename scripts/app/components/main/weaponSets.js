@@ -53,6 +53,10 @@ export class WeaponSets extends ArgonComponent {
                 primary: null,
                 secondary: null,
             },
+            4: {
+                primary: null,
+                secondary: null,
+            },
         };
     }
 
