@@ -192,7 +192,16 @@ export class TargetPicker{
   }
 
   init() {
-    if(game.settings.get("enhancedcombathud", "rangepickerclear")) game.user.targets.forEach(t => t.setTarget(false, { releaseOthers: true }));
+    if(game.settings.get("enhancedcombathud", "rangepickerclear")) {
+      // The initial wipe is our own action: each release fires targetToken synchronously, and
+      // with more pre-targets than maxTargets the intermediate sizes would complete the picker
+      // before the user picks anything (stacking: buffer phantom clicks). Suppress the hook for
+      // the wipe, then re-sync the count snapshotted pre-wipe in the constructor.
+      this._suppress = true;
+      game.user.targets.forEach(t => t.setTarget(false, { releaseOthers: true }));
+      this._suppress = false;
+      this._targetCount = game.user.targets.size;
+    }
     const element = document.createElement("div");
     element.classList.add("ech-target-picker");
     document.body.appendChild(element);
