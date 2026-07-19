@@ -61,7 +61,9 @@ export class AccordionPanelCategory extends ArgonComponent {
 
     _setUses() {
         if (!Number.isNumeric(this.uses.value)) return;
+        if (!this.buttonContainer) return; // category DOM not built yet — a uses-update raced ahead of the render (fires again after build)
         const usesElement = this.buttonContainer.querySelector(".feature-spell-slots");
+        if (!usesElement) return;
         usesElement.innerHTML = "";
         if (this.uses.value === Infinity) {
             usesElement.innerHTML = `<span class="spell-slot spell-cantrip"><i class="fas fa-infinity"></i></span>`;
