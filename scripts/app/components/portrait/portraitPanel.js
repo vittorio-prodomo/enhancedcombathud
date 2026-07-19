@@ -13,11 +13,11 @@ export class PortraitPanel extends ArgonComponent {
     }
 
     get name() {
-        return this.actor.name;
+        return this.actor?.name;
     }
 
     get image() {
-        return this.actor.img;
+        return this.actor?.img;
     }
 
     get description() {
@@ -54,7 +54,7 @@ export class PortraitPanel extends ArgonComponent {
 
     async getEffects() {
         const effects = [];
-        for(const effect of this.actor.temporaryEffects) {
+        for(const effect of this.actor?.temporaryEffects ?? []) {
             effects.push({img: effect.img, name: effect.name, uuid: effect.uuid,tooltip: await foundry.applications.ux.TextEditor.implementation.enrichHTML(effect.description)});
         }
         return effects;
@@ -132,6 +132,11 @@ export class PortraitPanel extends ArgonComponent {
     }
 
     refresh() {
+        // On combat teardown the debounced refresh can fire after ui.ARGON._actor
+        // has gone null (current combatant cleared / token deselected). Bail out of
+        // the render rather than throwing on every getData/getStatBlocks/getEffects
+        // deref; the HUD self-heals on the next valid refresh. (T48a)
+        if (!this.actor) return;
         this.render();
     }
 
