@@ -38,6 +38,15 @@ export function registerSettings() {
         config: false,
     });
 
+    // Durable backing store for CoreHud#_hudState (panel open/closed arrangement), keyed by actor id.
+    // Client-scoped: how one user arranges their own HUD is a per-client preference, not world data.
+    game.settings.register("enhancedcombathud", "hudState", {
+        type: Object,
+        default: {},
+        scope: "client",
+        config: false,
+    });
+
     // Define a settings submenu which handles advanced configuration needs
     game.settings.registerMenu("enhancedcombathud", "echThemeOptions", {
         name: game.i18n.localize("enhancedcombathud.settings.thememenu.name"),

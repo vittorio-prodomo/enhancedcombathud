@@ -49,7 +49,8 @@ export class CoreHud extends HandlebarsApplication {
     this._itemButtons = new Set();
     this._accordionPanelCategories = new Set();
     this._batchItemsUpdates = new Set();
-    this._hudState = new Map();
+    this._hudState = this._loadHudState();
+    this._persistHudState = foundry.utils.debounce(this._persistHudState, 250);
     this._tooltip = null;
     this._target = null;
     this._enabled = false;
@@ -269,12 +270,43 @@ export class CoreHud extends HandlebarsApplication {
     };
   }
 
+  // The panel arrangement is keyed by actor ID (not the actor document) so it survives a
+  // serialization round-trip through the "hudState" client setting — a Map keyed by the document
+  // was rebuilt empty on every page load, which is why a category opened by hand only ever stuck
+  // for the session and was shut again by toggleDefaults() at the next login.
+  _loadHudState() {
+    let stored = {};
+    try {
+      stored = game.settings.get("enhancedcombathud", "hudState") ?? {};
+    } catch (e) {
+      console.warn("Enhanced Combat HUD | could not read the stored HUD state", e);
+    }
+    // Restore the accordion arrangement, but never a container panel's own open/closed flag: that
+    // one tracks the pop-up the user has open right now, and re-opening it unprompted at login
+    // would be a new behaviour rather than a restored preference.
+    for (const panels of Object.values(stored)) {
+      for (const state of Object.values(panels ?? {})) {
+        if (state && typeof state === "object") state.visible = false;
+      }
+    }
+    return new Map(Object.entries(stored));
+  }
+
+  _persistHudState() {
+    game.settings
+      .set("enhancedcombathud", "hudState", Object.fromEntries(this._hudState))
+      .catch((e) => console.warn("Enhanced Combat HUD | could not store the HUD state", e));
+  }
+
   getState() {
-    return this._hudState.get(this._actor);
+    if (!this._actor) return;
+    return this._hudState.get(this._actor.id);
   }
 
   setState(state) {
-    this._hudState.set(this._actor, state);
+    if (!this._actor) return;
+    this._hudState.set(this._actor.id, state);
+    this._persistHudState();
   }
 
   getPanelState(panel) {
@@ -291,8 +323,8 @@ export class CoreHud extends HandlebarsApplication {
   }
 
   async _renderInner(data) {
-    const _prevState = this._hudState.get(this._actor);
-    if (!_prevState) this._hudState.set(this._actor, {});
+    const _prevState = this.getState();
+    if (!_prevState) this.setState({});
     // const element = await super._renderInner(data);
     // const html = element[0];
     const html = this.element;
