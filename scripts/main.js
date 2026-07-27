@@ -34,8 +34,8 @@ Hooks.on("ready", () => {
   // Run the plain (non-stacking) picker on demand, for callers outside the HUD that want the
   // native "0/N targets" canvas flow (e.g. CPR's Hunter's Mark move button). Resolves true once
   // the user's targets reach `targets` (read them off game.user.targets), false on cancel.
-  mod.api.runTargetPicker = ({token, targets = 1, ranges, item}) =>
-    new TargetPicker({token, targets, ranges: ranges ?? {normal: null, long: null}, item}).promise;
+  mod.api.runTargetPicker = ({token, targets = 1, ranges, item, label}) =>
+    new TargetPicker({token, targets, ranges: ranges ?? {normal: null, long: null}, item, label}).promise;
 });
 
 export function registerKeybindings() {

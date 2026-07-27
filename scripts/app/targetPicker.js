@@ -3,7 +3,7 @@ import { showRangeFinder, showRangeRings, clearRangeFinders, clearRanges } from 
 let activeTargetPicker = null;
 
 export class TargetPicker{
-  constructor ({token, targets, ranges, stack = false, item = null}) {
+  constructor ({token, targets, ranges, stack = false, item = null, label = null}) {
     checkShowTargetPickerGuide();
     if (activeTargetPicker) activeTargetPicker.end(false);
     activeTargetPicker = this;
@@ -11,6 +11,7 @@ export class TargetPicker{
     this.token = token;
     this.stack = stack;
     this.item = item;
+    this.label = label;   // FORK PATCH: overrides the "n/m Targets" cursor text
     this.distribution = new Map(); // Token -> count (stacking mode only)
     this._controlled = canvas.tokens.controlled.map(t => t.id); // caster selection to preserve
     this._pending = [];            // buffered targetToken events, flushed per microtask
@@ -219,7 +220,9 @@ export class TargetPicker{
       this.element.style.left = clientX + 20 + "px";
       this.element.style.top = clientY + "px";
     }
-    this.element.innerText = `${this.targetCount}/${this.maxTargets} Targets`;
+    // FORK PATCH: a caller-supplied label replaces the count entirely — for single-pick flows the
+    // count is noise, and naming the thing being picked is what the player needs.
+    this.element.innerText = this.label ?? `${this.targetCount}/${this.maxTargets} Targets`;
   }
 
   end(res) {
