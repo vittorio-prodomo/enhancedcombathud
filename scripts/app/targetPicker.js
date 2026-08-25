@@ -45,8 +45,16 @@ export class TargetPicker{
     this.movelistener = (event) => {
         this.update(event);
     };
+    this.rightdownlistener = (event) => {
+      if (event.button === 2) this._rightDown = { x: event.screenX, y: event.screenY };
+    };
     this.clicklistener = (event) => {
       if (event.which !== 3) return;
+      // T162: a right-click DRAG is a canvas pan — only a stationary right-click acts
+      // (decrement while stacking, cancel otherwise). 10px-per-axis threshold, same as
+      // CPR's Crosshairs and the template-preview cancel.
+      if (this._rightDown
+        && !(Math.abs(event.screenX - this._rightDown.x) < 10 && Math.abs(event.screenY - this._rightDown.y) < 10)) return;
       if (this.stack) {
         // Read the hovered token BEFORE touching control/targets — re-selecting the caster clears
         // the goblin's hover, so getHoveredToken() must run first.
@@ -76,6 +84,7 @@ export class TargetPicker{
       }
     };
     document.addEventListener("mousemove", this.movelistener);
+    document.addEventListener("mousedown", this.rightdownlistener);
     document.addEventListener("mouseup", this.clicklistener);
     document.addEventListener("keyup", this.keyuplistener);
     this.init();
@@ -229,6 +238,7 @@ export class TargetPicker{
     Hooks.off("targetToken", this.targetHook);          // stop counting before we touch targets
     this.clearBadges();
     document.removeEventListener("mousemove", this.movelistener);
+    document.removeEventListener("mousedown", this.rightdownlistener);
     document.removeEventListener("mouseup", this.clicklistener);
     document.removeEventListener("keyup", this.keyuplistener);
     clearRanges(true);
