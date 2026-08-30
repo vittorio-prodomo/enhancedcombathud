@@ -172,3 +172,13 @@
         transition-delay: 0s;
     }
 }
+
+// Foundry core's TooltipManager caps `#tooltip`/`.locked-tooltip` at
+// max-width: 320px, but everything above is designed for 400px — the mismatch
+// clips the header/body horizontally and leaves the locked tooltip scrolling
+// sideways. Lift the core cap ONLY for Argon-classed tooltips (fork,
+// 2026-08-30).
+#tooltip.ech-tooltip-container,
+.locked-tooltip.ech-tooltip-container {
+    max-width: unset;
+}
