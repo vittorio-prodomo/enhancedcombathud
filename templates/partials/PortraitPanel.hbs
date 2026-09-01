@@ -15,11 +15,12 @@
 			</div>
 		</div>
 		<div class="portrait-hud-image" style="background-image: url('{{image}}');"></div>
+		{{#if level}}<div class="player-level">{{level}}</div>{{/if}}
 		<div class="portrait-stat-block player-details{{#if playerDetailsBottom}} player-details-bottom{{/if}}">
 			<span class="player-name">{{name}}</span>
-				<span class="player-detail">
-					{{description}}
-				</span>
+				{{#each details}}
+				<span class="player-detail">{{this}}</span>
+				{{/each}}
 				<div class="effects-container">
 				</div>
 		</div>

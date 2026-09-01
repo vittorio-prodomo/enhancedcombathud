@@ -102,15 +102,19 @@
         display: flex;
         flex-direction: column;
         font-size: 1.5rem;
+        gap: 0.1rem;
         left: 0px;
         margin-bottom: 0px;
         margin-left: 0rem;
         margin-top: auto;
-        padding: 1rem;
+        /* leave the top-right level badge its corner */
+        padding: 0.8rem 3.5rem 1rem 1rem;
         position: absolute;
         text-shadow: 0 0 black;
         top: 0px;
         width: 100%;
+        /* keep the name/detail lines readable over a light portrait */
+        background: linear-gradient(180deg, #00000073 0%, #0000004d 60%, transparent 100%);
         
         .effects-container{
             display: flex;
@@ -128,18 +132,55 @@
         top: auto;
         bottom: 0px;
         flex-direction: column-reverse;
-        padding-bottom: 3.5rem;
+        padding: 1rem 3.5rem 3.5rem 1rem;
         -webkit-mask-image: linear-gradient(0deg, black 0%, #000000b5 75%, transparent 100%);
         mask-image: linear-gradient(180deg, black 0%, #000000b5 75%, transparent 100%);
         background: var(--ech-mainAction-base-background)
     }
 
+    .portrait-stat-block.player-details .player-name {
+        line-height: 1.15;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
+
     .portrait-stat-block.player-details .player-detail {
         font-size: 1rem;
+        line-height: 1.25;
+        opacity: 0.92;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
         white-space: nowrap;
+    }
+
+    /* first detail line (class) reads as the stronger of the two */
+    .portrait-stat-block.player-details .player-detail:first-of-type {
+        font-weight: 700;
+        opacity: 1;
+    }
+
+    /* Level / CR badge — portrait top-right corner */
+    .player-level {
+        backdrop-filter: var(--ech-blur-amount);
+        background: var(--ech-mainAction-base-background);
+        border: 1px solid var(--ech-portrait-base-border);
+        border-radius: 3px;
+        color: var(--ech-portrait-base-color);
+        font-size: 0.85rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        line-height: 1.2;
+        padding: 0.15rem 0.45rem;
+        pointer-events: none;
+        position: absolute;
+        right: 0.6rem;
+        text-transform: uppercase;
+        top: 0.6rem;
+        white-space: nowrap;
+        z-index: 2;
     }
 
     .player-buttons {
@@ -194,7 +235,7 @@
     .portrait-actor-configuration {
         position: absolute;
         top: 0;
-        right: 0;
+        left: 0;
         font-size: xxx-large;
         padding: 1rem;
         z-index: 1;

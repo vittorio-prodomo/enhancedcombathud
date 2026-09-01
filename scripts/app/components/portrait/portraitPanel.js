@@ -24,6 +24,21 @@ export class PortraitPanel extends ArgonComponent {
         return "";
     }
 
+    // Optional compact badge rendered in the portrait's top-right corner
+    // (system layer supplies e.g. "Lvl 3" for a PC, "CR 1/2" for an NPC).
+    get level() {
+        return null;
+    }
+
+    // The detail lines under the character name. A system layer may return
+    // several short lines instead of one long one; falls back to `description`
+    // so systems that only implement the old getter keep working.
+    get details() {
+        const description = this.description;
+        if (Array.isArray(description)) return description.filter((line) => !!line);
+        return description ? [description] : [];
+    }
+
     get isDead() {
         return false;
     }
@@ -65,6 +80,8 @@ export class PortraitPanel extends ArgonComponent {
             name: this.name,
             image: this.image,
             description: this.description,
+            details: this.details,
+            level: this.level,
             isDead: this.isDead,
             isDying: this.isDying,
             deathIcon: this.deathIcon,
