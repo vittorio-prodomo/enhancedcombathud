@@ -107,8 +107,7 @@
         margin-bottom: 0px;
         margin-left: 0rem;
         margin-top: auto;
-        /* leave the top-right level badge its corner */
-        padding: 0.8rem 3.5rem 1rem 1rem;
+        padding: 0.8rem 1rem 1rem 1rem;
         position: absolute;
         text-shadow: 0 0 black;
         top: 0px;
@@ -162,7 +161,7 @@
         opacity: 1;
     }
 
-    /* Level / CR badge — portrait top-right corner */
+    /* Level / CR badge — centred along the portrait's top edge (the config gear owns the top-right corner) */
     .player-level {
         backdrop-filter: var(--ech-blur-amount);
         background: var(--ech-mainAction-base-background);
@@ -176,11 +175,17 @@
         padding: 0.15rem 0.45rem;
         pointer-events: none;
         position: absolute;
-        right: 0.6rem;
+        left: 50%;
+        transform: translateX(-50%);
         text-transform: uppercase;
         top: 0.6rem;
         white-space: nowrap;
         z-index: 2;
+    }
+
+    /* push the name/detail lines below the centred badge so a long name never runs under it */
+    &:has(.player-level) .portrait-stat-block.player-details:not(.player-details-bottom) {
+        padding-top: 2.4rem;
     }
 
     .player-buttons {
@@ -235,7 +240,7 @@
     .portrait-actor-configuration {
         position: absolute;
         top: 0;
-        left: 0;
+        right: 0;
         font-size: xxx-large;
         padding: 1rem;
         z-index: 1;
